@@ -76,4 +76,23 @@ class CashsOutController extends Controller
     {
         return Excel::download(new CashsOutExport, 'cashout_entries.xlsx');
     }
+
+    public function monthlyReport(Request $request)
+    {
+        $month = $request->input('month');
+
+        if ($month) {
+            $cashOuts = CashOut::with('category')
+                ->whereMonth('date', '=', \Carbon\Carbon::parse($month)->month)
+                ->whereYear('date', '=', \Carbon\Carbon::parse($month)->year)
+                ->get();
+
+            $totalAmount = $cashOuts->sum('amount');
+        } else {
+            $cashOuts = collect();
+            $totalAmount = 0;
+        }
+
+        return view('admin.cashs-out.monthly_report', compact('cashOuts', 'month', 'totalAmount'));
+    }
 }

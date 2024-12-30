@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Dashboard Admin')
+@section('title', 'Dashboard Owner')
 
 @section('content')
     <div class="row">

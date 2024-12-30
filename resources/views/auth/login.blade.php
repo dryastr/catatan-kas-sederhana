@@ -30,7 +30,8 @@
 <body>
     <!-- Content -->
 
-    <div class="container-xxl">
+    <div class="container-xxl"
+        style="background-image: url('{{ asset('assets-auth/img/backgrounds/image.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; ">
         <div class="authentication-wrapper authentication-basic container-p-y">
             <div class="authentication-inner">
                 <!-- Register -->
@@ -45,7 +46,7 @@
                                 </span>
                             </a>
                         </div> --}}
-                        <h4 class="mb-2">Selamat Datang!</h4>
+                        <h4 class="mb-2">Welcome To Website PT. GPT</h4>
                         <p class="mb-4">Silahkan login untuk masuk ke akunmu</p>
 
                         <form id="" class="mb-3" method="POST" action="{{ route('login') }}">

@@ -76,4 +76,23 @@ class CashsController extends Controller
     {
         return Excel::download(new CashsExport, 'cash_entries.xlsx');
     }
+
+    public function monthlyReport(Request $request)
+    {
+        $month = $request->input('month');
+
+        if ($month) {
+            $cashs = Cash::with('category')
+                ->whereMonth('date', '=', \Carbon\Carbon::parse($month)->month)
+                ->whereYear('date', '=', \Carbon\Carbon::parse($month)->year)
+                ->get();
+
+            $totalAmount = $cashs->sum('amount');
+        } else {
+            $cashs = collect();
+            $totalAmount = 0;
+        }
+
+        return view('admin.cashs.monthly_report', compact('cashs', 'month', 'totalAmount'));
+    }
 }

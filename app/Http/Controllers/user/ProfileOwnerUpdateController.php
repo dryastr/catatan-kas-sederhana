@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
-class ProfileUpdateController extends Controller
+class ProfileOwnerUpdateController extends Controller
 {
     public function index()
     {
@@ -22,7 +22,7 @@ class ProfileUpdateController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
             'password' => 'nullable|string|min:8|confirmed',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
         ]);
 
         $user = Auth::user();
@@ -46,6 +46,7 @@ class ProfileUpdateController extends Controller
         }
 
         $user->save();
-        return redirect()->route('profile.index')->with('success', 'Profil berhasil diperbarui.');
+
+        return redirect()->route('profile.index.owner')->with('success', 'Profil berhasil diperbarui.');
     }
 }

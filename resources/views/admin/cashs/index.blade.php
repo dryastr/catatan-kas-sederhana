@@ -14,16 +14,27 @@
                             <small class="text-muted">Saldo Total Kas Masuk: Rp.
                                 {{ number_format($totalBalanceCashIn, 0, ',', '.') }}</small>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addCashModal">
-                                Tambah Kas Masuk Baru
-                            </button>
-                            <a href="{{ route('cashs.export') }}" class="btn btn-success ms-2">
-                                Export to Excel
-                            </a>
+                        <div class="d-flex flex-column gap-2 align-items-end">
+                            @if (auth()->user()->role->name == 'admin')
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#addCashModal">
+                                        Tambah Kas Masuk Baru
+                                    </button>
+                                    <a href="{{ route('cashs.export') }}" class="btn btn-success ms-2">
+                                        Export to Excel
+                                    </a>
+                                </div>
+                            @endif
+                            <form id="monthlyReportForm" action="{{ route('cashs.monthlyReport') }}" method="GET">
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="month" name="month" id="month" class="form-control w-auto"
+                                        value="{{ request('month') }}">
+                                    <button type="submit" class="btn btn-primary">Tampilkan</button>
+                                </div>
+                            </form>
                         </div>
-                    </div>
+                        </div>
                 </div>
                 <div class="card-content">
                     <div class="card-body">
@@ -37,7 +48,9 @@
                                         <th>Kategori</th>
                                         <th>Catatan</th>
                                         <th>Jumlah</th>
-                                        <th>Aksi</th>
+                                        @if (auth()->user()->role->name == 'admin')
+                                            <th>Aksi</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -49,37 +62,40 @@
                                             <td>{{ $cash->category->name }}</td>
                                             <td>{{ Str::limit($cash->notes, 100, '...') }}</td>
                                             <td>Rp. {{ number_format($cash->amount, 0, ',', '.') }}</td>
-                                            <td class="text-nowrap">
-                                                <div class="dropdown dropup">
-                                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
-                                                        id="dropdownMenuButton-{{ $cash->id }}"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="bi bi-three-dots-vertical"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu"
-                                                        aria-labelledby="dropdownMenuButton-{{ $cash->id }}">
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#viewCashModal"
-                                                                onclick="viewCash({{ json_encode($cash) }})">Lihat</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#editCashModal"
-                                                                onclick="editCash({{ json_encode($cash) }})">Ubah</a>
-                                                        </li>
-                                                        <li>
-                                                            <form action="{{ route('cashs.destroy', $cash->id) }}"
-                                                                method="POST"
-                                                                onsubmit="return confirm('Yakin ingin menghapus cash entry ini?')">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="dropdown-item">Hapus</button>
-                                                            </form>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </td>
+                                            @if (auth()->user()->role->name == 'admin')
+                                                <td class="text-nowrap">
+                                                    <div class="dropdown dropup">
+                                                        <button class="btn btn-sm btn-secondary dropdown-toggle"
+                                                            type="button" id="dropdownMenuButton-{{ $cash->id }}"
+                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu"
+                                                            aria-labelledby="dropdownMenuButton-{{ $cash->id }}">
+                                                            <li>
+                                                                <a class="dropdown-item" href="#"
+                                                                    data-bs-toggle="modal" data-bs-target="#viewCashModal"
+                                                                    onclick="viewCash({{ json_encode($cash) }})">Lihat</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item" href="#"
+                                                                    data-bs-toggle="modal" data-bs-target="#editCashModal"
+                                                                    onclick="editCash({{ json_encode($cash) }})">Ubah</a>
+                                                            </li>
+                                                            <li>
+                                                                <form action="{{ route('cashs.destroy', $cash->id) }}"
+                                                                    method="POST"
+                                                                    onsubmit="return confirm('Yakin ingin menghapus cash entry ini?')">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit"
+                                                                        class="dropdown-item">Hapus</button>
+                                                                </form>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

@@ -11,16 +11,28 @@
                         <div class="">
                             <h4 class="card-title">Daftar Kas Keluar | Sisa Rp.
                                 {{ number_format($totalBalance, 0, ',', '.') }}</h4>
-                            <small class="text-muted">Saldo Total Kas Keluar: Rp. {{ number_format($totalBalanceCashOut, 0, ',', '.') }}</small>
+                            <small class="text-muted">Saldo Total Kas Keluar: Rp.
+                                {{ number_format($totalBalanceCashOut, 0, ',', '.') }}</small>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addCashOutModal">
-                                Tambah Kas Keluar Baru
-                            </button>
-                            <a href="{{ route('cashsout.export') }}" class="btn btn-success ms-2">
-                                Export to Excel
-                            </a>
+                        <div class="d-flex flex-column gap-2 align-items-end">
+                            @if (auth()->user()->role->name == 'admin')
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#addCashOutModal">
+                                        Tambah Kas Keluar Baru
+                                    </button>
+                                    <a href="{{ route('cashsout.export') }}" class="btn btn-success ms-2">
+                                        Export to Excel
+                                    </a>
+                                </div>
+                            @endif
+                            <form id="monthlyReportForm" action="{{ route('cashOut.monthlyReport') }}" method="GET">
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="month" name="month" id="month" class="form-control w-auto"
+                                        value="{{ request('month') }}">
+                                    <button type="submit" class="btn btn-primary">Tampilkan</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -36,7 +48,9 @@
                                         <th>Kategori</th>
                                         <th>Catatan</th>
                                         <th>Jumlah</th>
-                                        <th>Aksi</th>
+                                        @if (auth()->user()->role->name == 'admin')
+                                            <th>Aksi</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -48,37 +62,43 @@
                                             <td>{{ $cashOut->category->name }}</td>
                                             <td>{{ Str::limit($cashOut->notes, 100, '...') }}</td>
                                             <td>Rp. {{ number_format($cashOut->amount, 0, ',', '.') }}</td>
-                                            <td class="text-nowrap">
-                                                <div class="dropdown dropup">
-                                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
-                                                        id="dropdownMenuButton-{{ $cashOut->id }}"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="bi bi-three-dots-vertical"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu"
-                                                        aria-labelledby="dropdownMenuButton-{{ $cashOut->id }}">
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#viewCashOutModal"
-                                                                onclick="viewCashOut({{ json_encode($cashOut) }})">Lihat</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#editCashOutModal"
-                                                                onclick="editCashOut({{ json_encode($cashOut) }})">Ubah</a>
-                                                        </li>
-                                                        <li>
-                                                            <form action="{{ route('cashs-out.destroy', $cashOut->id) }}"
-                                                                method="POST"
-                                                                onsubmit="return confirm('Yakin ingin menghapus cash out entry ini?')">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="dropdown-item">Hapus</button>
-                                                            </form>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </td>
+                                            @if (auth()->user()->role->name == 'admin')
+                                                <td class="text-nowrap">
+                                                    <div class="dropdown dropup">
+                                                        <button class="btn btn-sm btn-secondary dropdown-toggle"
+                                                            type="button" id="dropdownMenuButton-{{ $cashOut->id }}"
+                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu"
+                                                            aria-labelledby="dropdownMenuButton-{{ $cashOut->id }}">
+                                                            <li>
+                                                                <a class="dropdown-item" href="#"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#viewCashOutModal"
+                                                                    onclick="viewCashOut({{ json_encode($cashOut) }})">Lihat</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item" href="#"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editCashOutModal"
+                                                                    onclick="editCashOut({{ json_encode($cashOut) }})">Ubah</a>
+                                                            </li>
+                                                            <li>
+                                                                <form
+                                                                    action="{{ route('cashs-out.destroy', $cashOut->id) }}"
+                                                                    method="POST"
+                                                                    onsubmit="return confirm('Yakin ingin menghapus cash out entry ini?')">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit"
+                                                                        class="dropdown-item">Hapus</button>
+                                                                </form>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

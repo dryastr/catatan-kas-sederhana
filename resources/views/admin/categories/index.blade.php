@@ -9,10 +9,12 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
                         <h4 class="card-title">Daftar Kategori</h4>
+                        @if (auth()->user()->role->name == 'admin')
                         <button type="button" class="btn btn-success" data-bs-toggle="modal"
                             data-bs-target="#addCategoryModal">
                             Tambah Kategori Baru
                         </button>
+                        @endif
                     </div>
                 </div>
                 <div class="card-content">
@@ -23,7 +25,9 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Name</th>
-                                        <th>Aksi</th>
+                                        @if (auth()->user()->role->name == 'admin')
+                                            <th>Aksi</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -31,6 +35,7 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $category->name }}</td>
+                                            @if (auth()->user()->role->name == 'admin')
                                             <td class="text-nowrap">
                                                 <div class="dropdown dropup">
                                                     <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
@@ -46,8 +51,7 @@
                                                                 onclick="editCategory({{ json_encode($category) }})">Ubah</a>
                                                         </li>
                                                         <li>
-                                                            <form
-                                                                action="{{ route('categories.destroy', $category->id) }}"
+                                                            <form action="{{ route('categories.destroy', $category->id) }}"
                                                                 method="POST"
                                                                 onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
                                                                 @csrf
@@ -58,6 +62,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

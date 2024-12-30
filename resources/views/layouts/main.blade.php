@@ -66,6 +66,14 @@
             border-color: #526bc8;
         }
     </style> --}}
+    <style>
+        *{
+            border-radius: 0!important;
+        }
+        .sidebar-wrapper{
+            background-color: #bfdcd6;
+        }
+    </style>
 </head>
 
 <body>
